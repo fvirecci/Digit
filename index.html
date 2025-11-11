@@ -1,0 +1,2227 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGIT IMPRESE - Assistente Compilazione Domanda</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        
+        .container-main {
+            max-width: 1200px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header-section h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .header-section p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .progress-section {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #dee2e6;
+            z-index: 0;
+        }
+        
+        .step-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #dee2e6;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .step-item.active .step-circle {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .step-item.completed .step-circle {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .step-item.active .step-label {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .content-section {
+            padding: 40px 30px;
+        }
+        
+        .fase-container {
+            display: none;
+        }
+        
+        .fase-container.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fase-title {
+            color: var(--primary-color);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .fase-subtitle {
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 1.05rem;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .form-section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        
+        .required::after {
+            content: ' *';
+            color: var(--danger-color);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+        }
+        
+        .alert-info-custom {
+            background: #e7f3ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .alert-warning-custom {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .alert-danger-custom {
+            background: #f8d7da;
+            border-left: 4px solid var(--danger-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .result-box {
+            background: white;
+            border: 2px solid var(--success-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .result-box h4 {
+            color: var(--success-color);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .result-value {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .btn-primary-custom {
+            background: var(--primary-color);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary-custom:hover {
+            background: #0052a3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
+        }
+        
+        .btn-secondary-custom {
+            background: #6c757d;
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 5px;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .preventivo-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .preventivo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .preventivo-tipologia {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .badge-qualificato {
+            background: var(--success-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .badge-standard {
+            background: #6c757d;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .checklist-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .checklist-item.completed {
+            border-color: var(--success-color);
+            background: #f0fff4;
+        }
+        
+        .checklist-checkbox {
+            width: 30px;
+            height: 30px;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        
+        .checklist-content {
+            flex: 1;
+        }
+        
+        .checklist-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .checklist-description {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .export-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .export-btn {
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .export-btn:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .export-btn i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .summary-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .summary-card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .summary-card h5 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .summary-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .table-preventivi {
+            font-size: 0.95rem;
+        }
+        
+        .table-preventivi th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="container-main">
+            <!-- Header -->
+            <div class="header-section">
+                <h1><i class="fas fa-laptop-code"></i> DIGIT IMPRESE</h1>
+                <p>Assistente per la Compilazione della Domanda - Azione 1.2.2</p>
+                <p class="mt-2"><small>FSC Sicilia 2021-2027 | Periodo presentazione: 13-27 Novembre 2025</small></p>
+            </div>
+            
+            <!-- Progress Indicator -->
+            <div class="progress-section">
+                <div class="step-indicator" id="stepIndicator">
+                    <div class="step-item active" data-step="1">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Ammissibilità</div>
+                    </div>
+                    <div class="step-item" data-step="2">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Calcolo MOL</div>
+                    </div>
+                    <div class="step-item" data-step="3">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Preventivi</div>
+                    </div>
+                    <div class="step-item" data-step="4">
+                        <div class="step-circle">4</div>
+                        <div class="step-label">Istanza 2.1</div>
+                    </div>
+                    <div class="step-item" data-step="5">
+                        <div class="step-circle">5</div>
+                        <div class="step-label">Formulario F</div>
+                    </div>
+                    <div class="step-item" data-step="6">
+                        <div class="step-circle">6</div>
+                        <div class="step-label">Checklist</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="content-section">
+                <!-- FASE 1: Ammissibilità e Dati Base -->
+                <div class="fase-container active" id="fase1">
+                    <h2 class="fase-title">FASE 1: Verifica Ammissibilità e Dati Anagrafici</h2>
+                    <p class="fase-subtitle">Verifica dei requisiti preliminari per l'accesso al bando</p>
+                    
+                    <div class="alert-info-custom">
+                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> L'impresa deve essere costituita e attiva da almeno un anno e avere sede legale o unità operativa in Sicilia.
+                    </div>
+                    
+                    <!-- Dati Impresa -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-building"></i> Dati Impresa</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Ragione Sociale</label>
+                                <input type="text" class="form-control" id="ragioneSociale" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label required">Partita IVA</label>
+                                <input type="text" class="form-control" id="partitaIva" maxlength="11" pattern="[0-9]{11}" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label required">Codice Fiscale</label>
+                                <input type="text" class="form-control" id="codiceFiscale" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">PEC</label>
+                                <input type="email" class="form-control" id="pec" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Anno Costituzione</label>
+                                <input type="number" class="form-control" id="annoCostituzione" min="1900" max="2024" required>
+                                <small class="text-muted">Deve essere attiva da almeno 1 anno</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label required">Sede Legale (Indirizzo completo)</label>
+                                <input type="text" class="form-control" id="sedeLegale" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Sede in Sicilia?</label>
+                                <select class="form-select" id="sedeSicilia" required>
+                                    <option value="">Seleziona...</option>
+                                    <option value="si">Sì - Sede legale in Sicilia</option>
+                                    <option value="unita">Sì - Unità operativa in Sicilia</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Dimensione Impresa</label>
+                                <select class="form-select" id="dimensioneImpresa" required>
+                                    <option value="">Seleziona...</option>
+                                    <option value="micro">Microimpresa (< 10 dipendenti, ≤ 2M€ fatturato)</option>
+                                    <option value="piccola">Piccola Impresa (< 50 dipendenti, ≤ 10M€ fatturato)</option>
+                                    <option value="media">Media Impresa (< 250 dipendenti, ≤ 50M€ fatturato)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dati Legale Rappresentante -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-user-tie"></i> Legale Rappresentante</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label required">Nome</label>
+                                <input type="text" class="form-control" id="lrNome" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label required">Cognome</label>
+                                <input type="text" class="form-control" id="lrCognome" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label required">Codice Fiscale</label>
+                                <input type="text" class="form-control" id="lrCF" maxlength="16" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Luogo di Nascita</label>
+                                <input type="text" class="form-control" id="lrLuogoNascita" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Data di Nascita</label>
+                                <input type="date" class="form-control" id="lrDataNascita" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label required">Residenza</label>
+                                <input type="text" class="form-control" id="lrResidenza" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Verifica Ammissibilità -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-check-circle"></i> Verifica Requisiti di Ammissibilità</h4>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="checkDURC" required>
+                            <label class="form-check-label" for="checkDURC">
+                                <strong>DURC Regolare:</strong> L'impresa è in regola con il versamento dei contributi previdenziali e assistenziali
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="checkAntimafia" required>
+                            <label class="form-check-label" for="checkAntimafia">
+                                <strong>Antimafia:</strong> L'impresa non ha cause di decadenza, sospensione o divieto previste dall'art. 67 del D.Lgs 159/2011
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="checkRevoche" required>
+                            <label class="form-check-label" for="checkRevoche">
+                                <strong>Assenza Revoche:</strong> L'impresa non è destinataria di provvedimenti di revoca per indebita percezione nei 3 anni precedenti
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="checkProgettoDiverso" required>
+                            <label class="form-check-label" for="checkProgettoDiverso">
+                                <strong>Progetto Diverso:</strong> Il programma di investimento è diverso da quelli finanziati nell'ambito dell'Azione 1.1.2
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <div></div>
+                        <button class="btn btn-primary-custom" onclick="goToStep(2)">
+                            Avanti <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- FASE 2: Calcolo MOL e Indicatore Ordinatore -->
+                <div class="fase-container" id="fase2">
+                    <h2 class="fase-title">FASE 2: Calcolo MOL e Indicatore Ordinatore</h2>
+                    <p class="fase-subtitle">Dati economici e calcolo del criterio di ordinamento</p>
+                    
+                    <div class="alert-warning-custom">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Attenzione:</strong> L'Indicatore Ordinatore (MOL / Costo Investimento) determina la priorità di valutazione. Più alto è meglio!
+                    </div>
+                    
+                    <!-- Dati Economici -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-chart-line"></i> Dati Economici (Ultimo Bilancio)</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Anno di Riferimento</label>
+                                <input type="number" class="form-control" id="annoRiferimento" min="2020" max="2024" value="2023" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">MOL (Margine Operativo Lordo) €</label>
+                                <input type="number" class="form-control" id="mol" step="0.01" min="0" required>
+                                <small class="text-muted">Da Allegato B - Deve essere asseverato da Commercialista/Revisore/CAF</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Valore della Produzione €</label>
+                                <input type="number" class="form-control" id="valoreProduzione" step="0.01" min="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Costi della Produzione €</label>
+                                <input type="number" class="form-control" id="costiProduzione" step="0.01" min="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Ammortamenti €</label>
+                                <input type="number" class="form-control" id="ammortamenti" step="0.01" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Costo Progetto -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-euro-sign"></i> Costo del Progetto</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Costo Totale Ammissibile €</label>
+                                <input type="number" class="form-control" id="costoTotale" step="0.01" min="20000" required>
+                                <small class="text-muted">Minimo: €20.000</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Massimale Ammissibile €</label>
+                                <input type="text" class="form-control" id="massimaleAmmissibile" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Contributo Richiesto (80%) €</label>
+                                <input type="text" class="form-control" id="contributoRichiesto" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cofinanziamento Richiesto (20%) €</label>
+                                <input type="text" class="form-control" id="cofinanziamento" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label required">Modalità di Erogazione</label>
+                                <select class="form-select" id="modalitaErogazione" required>
+                                    <option value="">Seleziona...</option>
+                                    <option value="sal">A Stati di Avanzamento Lavori (SAL)</option>
+                                    <option value="saldo">A Saldo (solo se costo ≤ €100.000)</option>
+                                </select>
+                                <small class="text-muted" id="modalitaNote"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Richiesta Anticipo (40%)?</label>
+                                <select class="form-select" id="richiestaAnticipo">
+                                    <option value="no">No</option>
+                                    <option value="si">Sì (richiede fideiussione bancaria)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Capacità Finanziaria -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-university"></i> Capacità Finanziaria (Allegato C)</h4>
+                        
+                        <div class="alert-info-custom">
+                            <i class="fas fa-info-circle"></i> L'impresa deve dimostrare di avere disponibilità finanziaria pari ad almeno il 30% del costo totale del progetto.
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Disponibilità Finanziaria Certificata €</label>
+                                <input type="number" class="form-control" id="disponibilitaFinanziaria" step="0.01" min="0">
+                                <small class="text-muted">Da attestazione bancaria (Allegato C)</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Capacità Minima Richiesta (30%) €</label>
+                                <input type="text" class="form-control" id="capacitaMinima" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Risultato Calcolo -->
+                    <div class="result-box" id="risultatoMOL">
+                        <h4><i class="fas fa-calculator"></i> Indicatore Ordinatore Calcolato</h4>
+                        <div class="result-item">
+                            <span class="result-label">MOL / Costo Investimento:</span>
+                            <span class="result-value" id="indicatoreOrdinatore">-</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Posizionamento Stimato:</span>
+                            <span class="result-value" id="posizionamentoStimato">-</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Verifica Limiti di Spesa:</span>
+                            <span class="result-value" id="verificaLimiti">-</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Verifica Capacità Finanziaria:</span>
+                            <span class="result-value" id="verificaCapacita">-</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success w-100 mb-3" onclick="calcolaIndicatore()">
+                        <i class="fas fa-calculator"></i> Calcola Indicatore Ordinatore
+                    </button>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-secondary-custom" onclick="goToStep(1)">
+                            <i class="fas fa-arrow-left"></i> Indietro
+                        </button>
+                        <button class="btn btn-primary-custom" onclick="goToStep(3)">
+                            Avanti <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- FASE 3: Preventivi e Fornitori -->
+                <div class="fase-container" id="fase3">
+                    <h2 class="fase-title">FASE 3: Preventivi e Fornitori Qualificati</h2>
+                    <p class="fase-subtitle">Gestione preventivi di spesa e verifica fornitori</p>
+                    
+                    <div class="alert-info-custom">
+                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Per le categorie di spesa a, b, c, d è obbligatorio utilizzare fornitori qualificati (DIH, Start-up innovative, Innovation Manager, etc.)
+                    </div>
+                    
+                    <!-- Form Aggiunta Preventivo -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-file-invoice"></i> Aggiungi Preventivo</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Tipologia di Spesa</label>
+                                <select class="form-select" id="tipologiaSpesa">
+                                    <option value="">Seleziona...</option>
+                                    <option value="lett_a">a) Servizi di consulenza strategica (S3)</option>
+                                    <option value="lett_b">b) Servizi di consulenza specialistica/innovazione</option>
+                                    <option value="lett_c">c) Acquisizione tecnologie digitali evolute (S3)</option>
+                                    <option value="lett_d">d) Acquisizione tecnologie digitali di base</option>
+                                    <option value="lett_e">e) Acquisto software standard/attrezzature</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Descrizione Voce di Spesa</label>
+                                <input type="text" class="form-control" id="descrizioneSpesa" placeholder="Es: Piattaforma e-commerce personalizzata">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Fornitore</label>
+                                <input type="text" class="form-control" id="nomeFornitore" placeholder="Ragione sociale fornitore">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">P.IVA Fornitore</label>
+                                <input type="text" class="form-control" id="pivaFornitore" maxlength="11">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label required">Importo Preventivo €</label>
+                                <input type="number" class="form-control" id="importoPreventivo" step="0.01" min="0">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label required">Data Preventivo</label>
+                                <input type="date" class="form-control" id="dataPreventivo">
+                                <small class="text-muted">Deve essere successiva alla pubblicazione del bando</small>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Fornitore Qualificato?</label>
+                                <select class="form-select" id="fornitoreQualificato">
+                                    <option value="">Seleziona...</option>
+                                    <option value="dih">Digital Innovation Hub (DIH)</option>
+                                    <option value="startup">Start-up innovativa</option>
+                                    <option value="manager">Innovation Manager</option>
+                                    <option value="consulente">Consulente qualificato</option>
+                                    <option value="standard">No - Fornitore standard</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-success" onclick="aggiungiPreventivo()">
+                            <i class="fas fa-plus"></i> Aggiungi Preventivo
+                        </button>
+                    </div>
+                    
+                    <!-- Lista Preventivi -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-list"></i> Preventivi Inseriti</h4>
+                        
+                        <div id="listaPreventivi">
+                            <div class="alert alert-secondary text-center">
+                                <i class="fas fa-inbox"></i> Nessun preventivo inserito. Aggiungi almeno un preventivo.
+                            </div>
+                        </div>
+                        
+                        <div class="result-box mt-3" id="totaliPreventivi" style="display: none;">
+                            <h4><i class="fas fa-calculator"></i> Riepilogo Spese</h4>
+                            <div id="riepilogoSpese"></div>
+                            <div class="result-item mt-3">
+                                <span class="result-label">TOTALE PREVENTIVI:</span>
+                                <span class="result-value" id="totalePreventivi">€ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-secondary-custom" onclick="goToStep(2)">
+                            <i class="fas fa-arrow-left"></i> Indietro
+                        </button>
+                        <button class="btn btn-primary-custom" onclick="goToStep(4)">
+                            Avanti <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- FASE 4: Allegato 2.1 (Istanza) -->
+                <div class="fase-container" id="fase4">
+                    <h2 class="fase-title">FASE 4: Modello Istanza di Finanziamento (Allegato 2.1)</h2>
+                    <p class="fase-subtitle">Compilazione del modello di richiesta con dichiarazioni sostitutive</p>
+                    
+                    <div class="alert-warning-custom">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Attenzione:</strong> Questo documento richiede la firma digitale del Legale Rappresentante e marca da bollo.
+                    </div>
+                    
+                    <!-- Riepilogo Dati -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-file-signature"></i> Riepilogo Dati per Allegato 2.1</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Sezione 1 - Dati del Soggetto Proponente</h5>
+                                        <div id="riepilogoImpresa"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Sezione 2 - Legale Rappresentante</h5>
+                                        <div id="riepilogoLegaleRapp"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Sezione 3 - Importi e Modalità di Erogazione</h5>
+                                        <div id="riepilogoImporti"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- DSAN De Minimis -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-balance-scale"></i> Regime De Minimis</h4>
+                        
+                        <div class="alert-info-custom">
+                            <i class="fas fa-info-circle"></i> L'impresa non deve aver superato € 300.000 di aiuti de minimis negli ultimi 3 esercizi finanziari.
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Aiuti De Minimis già ricevuti negli ultimi 3 anni €</label>
+                            <input type="number" class="form-control" id="deMinimisRicevuti" step="0.01" min="0" value="0">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Totale De Minimis (esistente + richiesto) €</label>
+                            <input type="text" class="form-control" id="totaleDeMinimis" readonly>
+                        </div>
+                        
+                        <div id="alertDeMinimis"></div>
+                    </div>
+                    
+                    <!-- Marca da Bollo -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-stamp"></i> Marca da Bollo</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Numero Marca da Bollo</label>
+                                <input type="text" class="form-control" id="numeroMarcaBollo">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label required">Data Marca da Bollo</label>
+                                <input type="date" class="form-control" id="dataMarcaBollo">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-secondary-custom" onclick="goToStep(3)">
+                            <i class="fas fa-arrow-left"></i> Indietro
+                        </button>
+                        <button class="btn btn-primary-custom" onclick="goToStep(5)">
+                            Avanti <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- FASE 5: Formulario F -->
+                <div class="fase-container" id="fase5">
+                    <h2 class="fase-title">FASE 5: Formulario Proposta Progettuale (Allegato F)</h2>
+                    <p class="fase-subtitle">Descrizione dettagliata del progetto di digitalizzazione</p>
+                    
+                    <div class="alert-info-custom">
+                        <i class="fas fa-info-circle"></i> Il Formulario è il documento chiave per la valutazione di merito. Deve essere coerente con la Diagnosi Digitale (Allegato E).
+                    </div>
+                    
+                    <!-- Sezione A: Dati del Programma -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-info-circle"></i> Sezione A - Dati del Programma</h4>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required">Titolo del Progetto</label>
+                            <input type="text" class="form-control" id="titoloProgetto" placeholder="Es: Digitalizzazione e Trasformazione 4.0 dell'Azienda">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label required">Durata Progetto (mesi)</label>
+                                <input type="number" class="form-control" id="durataProgetto" min="1" max="12" value="12">
+                                <small class="text-muted">Massimo 12 mesi</small>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Data Prevista Inizio</label>
+                                <input type="date" class="form-control" id="dataInizioProgetto">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Data Prevista Fine</label>
+                                <input type="date" class="form-control" id="dataFineProgetto">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sezione B: Contesto e Motivazioni -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-lightbulb"></i> Sezione B - Contesto e Motivazioni</h4>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required">Descrizione dell'Azienda e Contesto di Mercato</label>
+                            <textarea class="form-control" id="contestoAzienda" rows="4" placeholder="Descrivere l'attività aziendale, il settore di riferimento, i mercati serviti..."></textarea>
+                            <small class="text-muted"><span id="contestoCount">0</span> caratteri</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required">Motivazioni e Bisogni del Progetto</label>
+                            <textarea class="form-control" id="motivazioniProgetto" rows="4" placeholder="Spiegare perché è necessaria questa trasformazione digitale, quali problemi risolve..."></textarea>
+                            <small class="text-muted"><span id="motivazioniCount">0</span> caratteri</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Sezione C: Obiettivi -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-bullseye"></i> Sezione C - Obiettivi del Progetto</h4>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required">Obiettivi Generali</label>
+                            <textarea class="form-control" id="obiettiviGenerali" rows="3" placeholder="Es: Aumentare l'efficienza operativa attraverso la digitalizzazione dei processi aziendali"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required">Obiettivi Specifici</label>
+                            <textarea class="form-control" id="obiettiviSpecifici" rows="4" placeholder="Elencare gli obiettivi specifici misurabili (es: riduzione del 30% dei tempi di gestione ordini, etc.)"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Coerenza con la Diagnosi Digitale</label>
+                            <textarea class="form-control" id="coerenzaDiagnosi" rows="3" placeholder="Spiegare come gli obiettivi derivano dalla Diagnosi Digitale ex-ante (Allegato E)"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Sezione D: Descrizione Tecnica -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-cogs"></i> Sezione D - Descrizione Tecnica degli Interventi</h4>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required">Tecnologie Digitali da Implementare</label>
+                            <textarea class="form-control" id="tecnologieDigitali" rows="5" placeholder="Descrivere dettagliatamente le tecnologie che saranno acquisite/implementate (es: piattaforma e-commerce, software gestionale ERP, sistemi CRM, IoT, Big Data Analytics, Cloud Computing, etc.)"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required">Processi Aziendali Interessati</label>
+                            <textarea class="form-control" id="processiAziendali" rows="4" placeholder="Quali processi aziendali saranno digitalizzati? (es: gestione magazzino, vendite online, amministrazione, marketing digitale, etc.)"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Innovatività della Soluzione</label>
+                            <textarea class="form-control" id="innovativita" rows="3" placeholder="Spiegare l'aspetto innovativo rispetto alla situazione attuale (AS-IS vs TO-BE)"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Sezione E: Piano di Lavoro -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-tasks"></i> Sezione E - Piano di Lavoro e Cronoprogramma</h4>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required">Work Package e Attività Principali</label>
+                            <textarea class="form-control" id="workPackages" rows="6" placeholder="Elencare i Work Package (WP) e le attività principali con tempistiche.&#10;Es:&#10;WP1 - Analisi e progettazione (mesi 1-2)&#10;WP2 - Acquisizione tecnologie (mesi 2-4)&#10;WP3 - Implementazione e customizzazione (mesi 4-9)&#10;WP4 - Formazione personale (mesi 9-11)&#10;WP5 - Test e collaudo (mesi 11-12)"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Deliverable e Output Attesi</label>
+                            <textarea class="form-control" id="deliverable" rows="4" placeholder="Elencare i deliverable concreti per ogni WP (es: report di analisi, software installato, personale formato, etc.)"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Sezione F: Risultati Attesi -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-chart-bar"></i> Sezione F - Risultati Attesi e Indicatori</h4>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required">Risultati Attesi (Qualitativi)</label>
+                            <textarea class="form-control" id="risultatiQualitativi" rows="4" placeholder="Es: miglioramento della competitività, maggiore efficienza, nuovi canali di vendita, etc."></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required">Indicatori di Realizzazione (KPI)</label>
+                            <textarea class="form-control" id="kpi" rows="5" placeholder="Definire indicatori misurabili.&#10;Es:&#10;- N. di processi digitalizzati: 5&#10;- Riduzione tempi di processo: -30%&#10;- Incremento vendite online: +50%&#10;- N. dipendenti formati: 10"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Impatto Economico Previsto</label>
+                            <textarea class="form-control" id="impattoEconomico" rows="3" placeholder="Stima dell'impatto economico (incremento fatturato, riduzione costi, etc.)"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Sezione H: Budget -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-euro-sign"></i> Sezione H - Budget Dettagliato</h4>
+                        
+                        <div class="alert-info-custom">
+                            <i class="fas fa-info-circle"></i> Il budget viene generato automaticamente dai preventivi inseriti nella Fase 3.
+                        </div>
+                        
+                        <div id="budgetDettagliato"></div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-secondary-custom" onclick="goToStep(4)">
+                            <i class="fas fa-arrow-left"></i> Indietro
+                        </button>
+                        <button class="btn btn-primary-custom" onclick="goToStep(6)">
+                            Avanti <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- FASE 6: Checklist e Export -->
+                <div class="fase-container" id="fase6">
+                    <h2 class="fase-title">FASE 6: Checklist Documentale e Finalizzazione</h2>
+                    <p class="fase-subtitle">Verifica completezza documenti e preparazione per l'invio</p>
+                    
+                    <!-- Summary -->
+                    <div class="summary-section">
+                        <h3><i class="fas fa-check-circle"></i> Riepilogo Finale</h3>
+                        <div class="summary-grid" id="summaryGrid"></div>
+                    </div>
+                    
+                    <!-- Checklist Documenti -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-clipboard-list"></i> Checklist Documenti Obbligatori</h4>
+                        
+                        <div class="alert-danger-custom mb-4">
+                            <i class="fas fa-exclamation-circle"></i> <strong>CRITICO:</strong> La mancanza di anche un solo documento comporta l'IRRICEVIBILITÀ della domanda!
+                        </div>
+                        
+                        <div id="checklistDocumenti"></div>
+                        
+                        <div class="mt-4 p-3" style="background: #f8f9fa; border-radius: 8px;">
+                            <h5><i class="fas fa-info-circle"></i> Note Importanti</h5>
+                            <ul>
+                                <li>Tutti i documenti devono essere firmati digitalmente dal Legale Rappresentante</li>
+                                <li>I preventivi devono essere datati dopo la pubblicazione del bando</li>
+                                <li>L'Allegato B (MOL) deve essere asseverato da Commercialista/Revisore/CAF</li>
+                                <li>L'Allegato C (Capacità finanziaria) deve essere rilasciato da un istituto di credito</li>
+                                <li>L'Allegato G (DNSH) richiede la firma di un tecnico abilitato se pertinente</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Tempistiche -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-calendar-alt"></i> Tempistiche di Presentazione</h4>
+                        
+                        <div class="alert-warning-custom">
+                            <h5><i class="fas fa-clock"></i> FINESTRA DI PRESENTAZIONE</h5>
+                            <p class="mb-2"><strong>Apertura:</strong> 13 Novembre 2025 ore 12:00</p>
+                            <p class="mb-0"><strong>Chiusura:</strong> 27 Novembre 2025 ore 12:00</p>
+                        </div>
+                        
+                        <div class="alert-info-custom">
+                            <i class="fas fa-info-circle"></i> <strong>Procedura a Sportello:</strong> Le domande sono ordinate per valore decrescente dell'Indicatore Ordinatore. L'ordine cronologico viene usato solo come criterio di spareggio in caso di parità.
+                        </div>
+                    </div>
+                    
+                    <!-- Export -->
+                    <div class="form-section">
+                        <h4 class="form-section-title"><i class="fas fa-download"></i> Esporta Dati</h4>
+                        
+                        <p>Esporta tutti i dati inseriti per conservazione e compilazione dei documenti ufficiali:</p>
+                        
+                        <div class="export-buttons">
+                            <div class="export-btn" onclick="esportaJSON()">
+                                <i class="fas fa-file-code"></i>
+                                <h5>JSON</h5>
+                                <p>Dati completi</p>
+                            </div>
+                            
+                            <div class="export-btn" onclick="esportaPDF()">
+                                <i class="fas fa-file-pdf"></i>
+                                <h5>PDF Riepilogativo</h5>
+                                <p>Report completo</p>
+                            </div>
+                            
+                            <div class="export-btn" onclick="esportaExcel()">
+                                <i class="fas fa-file-excel"></i>
+                                <h5>Excel</h5>
+                                <p>Budget e preventivi</p>
+                            </div>
+                            
+                            <div class="export-btn" onclick="stampaIstanza()">
+                                <i class="fas fa-print"></i>
+                                <h5>Stampa Istanza</h5>
+                                <p>Allegato 2.1</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="navigation-buttons">
+                        <button class="btn btn-secondary-custom" onclick="goToStep(5)">
+                            <i class="fas fa-arrow-left"></i> Indietro
+                        </button>
+                        <button class="btn btn-success btn-lg" onclick="finalizza()">
+                            <i class="fas fa-check-double"></i> Finalizza Preparazione
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <!-- SheetJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <script>
+        // Configurazione globale
+        const config = {
+            limiti: {
+                micro: 60000,
+                piccola: 100000,
+                media: 150000
+            },
+            percentualeContributo: 0.80,
+            minimoInvestimento: 20000,
+            limiteDeMinimis: 300000,
+            capacitaFinanziariaMinima: 0.30
+        };
+        
+        // Storage dati
+        let datiDomanda = {
+            impresa: {},
+            legaleRappresentante: {},
+            economia: {},
+            preventivi: [],
+            formulario: {},
+            checklist: []
+        };
+        
+        let currentStep = 1;
+        
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            inizializzaApp();
+            aggiungiEventListeners();
+            caricaDatiSalvati();
+        });
+        
+        function inizializzaApp() {
+            // Character counters
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    const countId = this.id + 'Count';
+                    const counter = document.getElementById(countId);
+                    if (counter) {
+                        counter.textContent = this.value.length;
+                    }
+                });
+            });
+            
+            // Auto-save
+            setInterval(salvaAutomaticamente, 30000); // Ogni 30 secondi
+        }
+        
+        function aggiungiEventListeners() {
+            // Calcolo automatico massimale
+            document.getElementById('dimensioneImpresa')?.addEventListener('change', aggiornaMassimale);
+            document.getElementById('costoTotale')?.addEventListener('input', function() {
+                aggiornaMassimale();
+                aggiornaContributoRichiesto();
+                aggiornaModalitaErogazione();
+                aggiornaCapacitaMinima();
+            });
+            
+            // Validazione anno costituzione
+            document.getElementById('annoCostituzione')?.addEventListener('input', function() {
+                const annoCorrente = new Date().getFullYear();
+                const annoCostituzione = parseInt(this.value);
+                
+                if (annoCostituzione && (annoCorrente - annoCostituzione < 1)) {
+                    alert('⚠️ L\'impresa deve essere costituita e attiva da almeno 1 anno!');
+                    this.value = '';
+                }
+            });
+            
+            // Validazione De Minimis
+            document.getElementById('deMinimisRicevuti')?.addEventListener('input', calcolaTotaleDeMinimis);
+            
+            // Validazione disponibilità finanziaria
+            document.getElementById('disponibilitaFinanziaria')?.addEventListener('input', verificaCapacitaFinanziaria);
+        }
+        
+        function aggiornaMassimale() {
+            const dimensione = document.getElementById('dimensioneImpresa').value;
+            const massimaleElement = document.getElementById('massimaleAmmissibile');
+            
+            if (dimensione && massimaleElement) {
+                const massimale = config.limiti[dimensione];
+                massimaleElement.value = formatEuro(massimale);
+            }
+        }
+        
+        function aggiornaContributoRichiesto() {
+            const costoTotale = parseFloat(document.getElementById('costoTotale').value) || 0;
+            const contributo = costoTotale * config.percentualeContributo;
+            const cofinanziamento = costoTotale - contributo;
+            
+            document.getElementById('contributoRichiesto').value = formatEuro(contributo);
+            document.getElementById('cofinanziamento').value = formatEuro(cofinanziamento);
+        }
+        
+        function aggiornaModalitaErogazione() {
+            const costoTotale = parseFloat(document.getElementById('costoTotale').value) || 0;
+            const modalitaSelect = document.getElementById('modalitaErogazione');
+            const note = document.getElementById('modalitaNote');
+            
+            if (costoTotale > 100000) {
+                // Disabilita opzione "a saldo"
+                modalitaSelect.querySelector('option[value="saldo"]').disabled = true;
+                if (modalitaSelect.value === 'saldo') {
+                    modalitaSelect.value = 'sal';
+                }
+                note.textContent = '⚠️ Con costo > €100.000 è obbligatoria l\'erogazione a SAL';
+                note.style.color = 'red';
+            } else {
+                modalitaSelect.querySelector('option[value="saldo"]').disabled = false;
+                note.textContent = '✓ Entrambe le modalità disponibili';
+                note.style.color = 'green';
+            }
+        }
+        
+        function aggiornaCapacitaMinima() {
+            const costoTotale = parseFloat(document.getElementById('costoTotale').value) || 0;
+            const capacitaMinima = costoTotale * config.capacitaFinanziariaMinima;
+            
+            document.getElementById('capacitaMinima').value = formatEuro(capacitaMinima);
+        }
+        
+        function calcolaTotaleDeMinimis() {
+            const deMinimisRicevuti = parseFloat(document.getElementById('deMinimisRicevuti').value) || 0;
+            const contributoRichiesto = parseFloat(document.getElementById('contributoRichiesto').value.replace(/[^0-9,]/g, '').replace(',', '.')) || 0;
+            const totale = deMinimisRicevuti + contributoRichiesto;
+            
+            document.getElementById('totaleDeMinimis').value = formatEuro(totale);
+            
+            const alertDiv = document.getElementById('alertDeMinimis');
+            if (totale > config.limiteDeMinimis) {
+                alertDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-times-circle"></i> <strong>ATTENZIONE:</strong> Il totale degli aiuti De Minimis supera il limite di €300.000!
+                        <br>Eccedenza: ${formatEuro(totale - config.limiteDeMinimis)}
+                    </div>
+                `;
+            } else {
+                alertDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> Totale De Minimis entro i limiti. Margine disponibile: ${formatEuro(config.limiteDeMinimis - totale)}
+                    </div>
+                `;
+            }
+        }
+        
+        function verificaCapacitaFinanziaria() {
+            const disponibilita = parseFloat(document.getElementById('disponibilitaFinanziaria').value) || 0;
+            const capacitaMinima = parseFloat(document.getElementById('capacitaMinima').value.replace(/[^0-9,]/g, '').replace(',', '.')) || 0;
+            
+            const verificaElement = document.getElementById('verificaCapacita');
+            if (verificaElement) {
+                if (disponibilita >= capacitaMinima) {
+                    verificaElement.innerHTML = '<span style="color: green;"><i class="fas fa-check-circle"></i> SUFFICIENTE</span>';
+                } else {
+                    verificaElement.innerHTML = '<span style="color: red;"><i class="fas fa-times-circle"></i> INSUFFICIENTE</span>';
+                }
+            }
+        }
+        
+        function calcolaIndicatore() {
+            // Raccogli dati
+            const mol = parseFloat(document.getElementById('mol').value);
+            const costoTotale = parseFloat(document.getElementById('costoTotale').value);
+            const dimensione = document.getElementById('dimensioneImpresa').value;
+            const disponibilita = parseFloat(document.getElementById('disponibilitaFinanziaria').value) || 0;
+            
+            // Validazioni
+            if (!mol || mol <= 0) {
+                alert('⚠️ Inserire un MOL valido!');
+                return;
+            }
+            
+            if (!costoTotale || costoTotale < config.minimoInvestimento) {
+                alert(`⚠️ Il costo totale deve essere almeno €${config.minimoInvestimento.toLocaleString('it-IT')}!`);
+                return;
+            }
+            
+            if (!dimensione) {
+                alert('⚠️ Selezionare la dimensione dell\'impresa!');
+                return;
+            }
+            
+            // Calcola indicatore
+            const indicatore = (mol / costoTotale).toFixed(4);
+            
+            // Verifica limiti
+            const massimale = config.limiti[dimensione];
+            const dentroLimiti = costoTotale <= massimale;
+            
+            // Verifica capacità finanziaria
+            const capacitaMinima = costoTotale * config.capacitaFinanziariaMinima;
+            const capacitaSufficiente = disponibilita >= capacitaMinima;
+            
+            // Stima posizionamento
+            let posizionamento = '';
+            if (indicatore > 0.5) posizionamento = 'ECCELLENTE (Top 10%)';
+            else if (indicatore > 0.3) posizionamento = 'OTTIMO (Top 30%)';
+            else if (indicatore > 0.15) posizionamento = 'BUONO (Top 50%)';
+            else if (indicatore > 0.05) posizionamento = 'MEDIO';
+            else posizionamento = 'BASSO';
+            
+            // Mostra risultati
+            document.getElementById('indicatoreOrdinatore').textContent = indicatore;
+            document.getElementById('posizionamentoStimato').textContent = posizionamento;
+            
+            document.getElementById('verificaLimiti').innerHTML = dentroLimiti 
+                ? '<span style="color: green;"><i class="fas fa-check-circle"></i> ENTRO I LIMITI</span>'
+                : '<span style="color: red;"><i class="fas fa-times-circle"></i> SUPERA IL MASSIMALE</span>';
+            
+            document.getElementById('verificaCapacita').innerHTML = capacitaSufficiente 
+                ? '<span style="color: green;"><i class="fas fa-check-circle"></i> SUFFICIENTE</span>'
+                : '<span style="color: red;"><i class="fas fa-times-circle"></i> INSUFFICIENTE</span>';
+            
+            // Salva dati
+            datiDomanda.economia = {
+                mol: mol,
+                costoTotale: costoTotale,
+                indicatoreOrdinatore: indicatore,
+                posizionamento: posizionamento,
+                dentroLimiti: dentroLimiti,
+                capacitaSufficiente: capacitaSufficiente
+            };
+            
+            salvaLocalmente();
+        }
+        
+        // Gestione Preventivi
+        function aggiungiPreventivo() {
+            const tipologia = document.getElementById('tipologiaSpesa').value;
+            const descrizione = document.getElementById('descrizioneSpesa').value;
+            const fornitore = document.getElementById('nomeFornitore').value;
+            const piva = document.getElementById('pivaFornitore').value;
+            const importo = parseFloat(document.getElementById('importoPreventivo').value);
+            const data = document.getElementById('dataPreventivo').value;
+            const qualificato = document.getElementById('fornitoreQualificato').value;
+            
+            // Validazioni
+            if (!tipologia || !descrizione || !fornitore || !importo || !data) {
+                alert('⚠️ Compilare tutti i campi obbligatori!');
+                return;
+            }
+            
+            // Verifica fornitore qualificato
+            const richiedeQualificato = ['lett_a', 'lett_b', 'lett_c', 'lett_d'].includes(tipologia);
+            if (richiedeQualificato && (!qualificato || qualificato === 'standard')) {
+                if (!confirm('⚠️ ATTENZIONE: Per questa tipologia di spesa è obbligatorio un fornitore qualificato (DIH, Start-up innovativa, Innovation Manager, etc.).\n\nContinuare comunque?')) {
+                    return;
+                }
+            }
+            
+            // Aggiungi preventivo
+            const preventivo = {
+                id: Date.now(),
+                tipologia: tipologia,
+                descrizione: descrizione,
+                fornitore: fornitore,
+                piva: piva,
+                importo: importo,
+                data: data,
+                qualificato: qualificato,
+                richiedeQualificato: richiedeQualificato
+            };
+            
+            datiDomanda.preventivi.push(preventivo);
+            
+            // Reset form
+            document.getElementById('tipologiaSpesa').value = '';
+            document.getElementById('descrizioneSpesa').value = '';
+            document.getElementById('nomeFornitore').value = '';
+            document.getElementById('pivaFornitore').value = '';
+            document.getElementById('importoPreventivo').value = '';
+            document.getElementById('dataPreventivo').value = '';
+            document.getElementById('fornitoreQualificato').value = '';
+            
+            // Aggiorna visualizzazione
+            mostraPreventivi();
+            salvaLocalmente();
+        }
+        
+        function mostraPreventivi() {
+            const container = document.getElementById('listaPreventivi');
+            
+            if (datiDomanda.preventivi.length === 0) {
+                container.innerHTML = `
+                    <div class="alert alert-secondary text-center">
+                        <i class="fas fa-inbox"></i> Nessun preventivo inserito. Aggiungi almeno un preventivo.
+                    </div>
+                `;
+                document.getElementById('totaliPreventivi').style.display = 'none';
+                return;
+            }
+            
+            const tipologieNomi = {
+                'lett_a': 'Consulenza strategica (S3)',
+                'lett_b': 'Consulenza specialistica',
+                'lett_c': 'Tecnologie evolute (S3)',
+                'lett_d': 'Tecnologie digitali base',
+                'lett_e': 'Software standard/attrezzature'
+            };
+            
+            const qualificatiNomi = {
+                'dih': 'Digital Innovation Hub',
+                'startup': 'Start-up innovativa',
+                'manager': 'Innovation Manager',
+                'consulente': 'Consulente qualificato',
+                'standard': 'Fornitore standard'
+            };
+            
+            let html = '';
+            let totale = 0;
+            let totaliPerTipologia = {};
+            
+            datiDomanda.preventivi.forEach((prev, index) => {
+                totale += prev.importo;
+                totaliPerTipologia[prev.tipologia] = (totaliPerTipologia[prev.tipologia] || 0) + prev.importo;
+                
+                const badgeQualificato = prev.richiedeQualificato && prev.qualificato !== 'standard'
+                    ? `<span class="badge-qualificato"><i class="fas fa-check"></i> ${qualificatiNomi[prev.qualificato]}</span>`
+                    : `<span class="badge-standard">Standard</span>`;
+                
+                html += `
+                    <div class="preventivo-item">
+                        <div class="preventivo-header">
+                            <span class="preventivo-tipologia">${tipologieNomi[prev.tipologia]}</span>
+                            ${badgeQualificato}
+                        </div>
+                        <div class="mb-2"><strong>${prev.descrizione}</strong></div>
+                        <div class="row">
+                            <div class="col-md-4"><small>Fornitore:</small> ${prev.fornitore}</div>
+                            <div class="col-md-3"><small>Data:</small> ${formatDate(prev.data)}</div>
+                            <div class="col-md-3"><strong>${formatEuro(prev.importo)}</strong></div>
+                            <div class="col-md-2 text-end">
+                                <button class="btn btn-sm btn-danger" onclick="rimuoviPreventivo(${index})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            // Mostra totali
+            let riepilogoHtml = '';
+            Object.keys(totaliPerTipologia).forEach(tip => {
+                riepilogoHtml += `
+                    <div class="result-item">
+                        <span class="result-label">${tipologieNomi[tip]}:</span>
+                        <span class="result-value">${formatEuro(totaliPerTipologia[tip])}</span>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('riepilogoSpese').innerHTML = riepilogoHtml;
+            document.getElementById('totalePreventivi').textContent = formatEuro(totale);
+            document.getElementById('totaliPreventivi').style.display = 'block';
+        }
+        
+        function rimuoviPreventivo(index) {
+            if (confirm('Rimuovere questo preventivo?')) {
+                datiDomanda.preventivi.splice(index, 1);
+                mostraPreventivi();
+                salvaLocalmente();
+            }
+        }
+        
+        // Navigazione tra fasi
+        function goToStep(step) {
+            // Validazione fase corrente
+            if (step > currentStep) {
+                if (!validaFaseCorrente()) {
+                    return;
+                }
+            }
+            
+            // Salva dati fase corrente
+            salvaDatiFase(currentStep);
+            
+            // Nascondi tutte le fasi
+            document.querySelectorAll('.fase-container').forEach(fase => {
+                fase.classList.remove('active');
+            });
+            
+            // Mostra fase richiesta
+            document.getElementById(`fase${step}`).classList.add('active');
+            
+            // Aggiorna indicatore progresso
+            document.querySelectorAll('.step-item').forEach((item, index) => {
+                item.classList.remove('active', 'completed');
+                if (index + 1 < step) {
+                    item.classList.add('completed');
+                } else if (index + 1 === step) {
+                    item.classList.add('active');
+                }
+            });
+            
+            currentStep = step;
+            
+            // Popola dati se necessario
+            if (step === 4) popolaAllegato21();
+            if (step === 5) popolaFormularioF();
+            if (step === 6) popolaChecklist();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function validaFaseCorrente() {
+            switch(currentStep) {
+                case 1:
+                    // Verifica dati impresa
+                    if (!document.getElementById('ragioneSociale').value) {
+                        alert('⚠️ Compilare la ragione sociale!');
+                        return false;
+                    }
+                    if (!document.getElementById('sedeSicilia').value || document.getElementById('sedeSicilia').value === 'no') {
+                        alert('⚠️ L\'impresa deve avere sede legale o unità operativa in Sicilia!');
+                        return false;
+                    }
+                    if (!document.getElementById('checkDURC').checked || !document.getElementById('checkAntimafia').checked) {
+                        alert('⚠️ Confermare tutti i requisiti di ammissibilità!');
+                        return false;
+                    }
+                    break;
+                    
+                case 2:
+                    // Verifica calcolo MOL
+                    if (!datiDomanda.economia.indicatoreOrdinatore) {
+                        alert('⚠️ Calcolare l\'Indicatore Ordinatore prima di procedere!');
+                        return false;
+                    }
+                    if (!datiDomanda.economia.dentroLimiti) {
+                        alert('⚠️ Il costo del progetto supera il massimale per la vostra dimensione!');
+                        return false;
+                    }
+                    break;
+                    
+                case 3:
+                    // Verifica preventivi
+                    if (datiDomanda.preventivi.length === 0) {
+                        alert('⚠️ Inserire almeno un preventivo!');
+                        return false;
+                    }
+                    break;
+            }
+            
+            return true;
+        }
+        
+        function salvaDatiFase(fase) {
+            switch(fase) {
+                case 1:
+                    datiDomanda.impresa = {
+                        ragioneSociale: document.getElementById('ragioneSociale').value,
+                        partitaIva: document.getElementById('partitaIva').value,
+                        codiceFiscale: document.getElementById('codiceFiscale').value,
+                        pec: document.getElementById('pec').value,
+                        annoCostituzione: document.getElementById('annoCostituzione').value,
+                        sedeLegale: document.getElementById('sedeLegale').value,
+                        sedeSicilia: document.getElementById('sedeSicilia').value,
+                        dimensione: document.getElementById('dimensioneImpresa').value
+                    };
+                    
+                    datiDomanda.legaleRappresentante = {
+                        nome: document.getElementById('lrNome').value,
+                        cognome: document.getElementById('lrCognome').value,
+                        codiceFiscale: document.getElementById('lrCF').value,
+                        luogoNascita: document.getElementById('lrLuogoNascita').value,
+                        dataNascita: document.getElementById('lrDataNascita').value,
+                        residenza: document.getElementById('lrResidenza').value
+                    };
+                    break;
+                    
+                case 2:
+                    datiDomanda.economia = {
+                        ...datiDomanda.economia,
+                        annoRiferimento: document.getElementById('annoRiferimento').value,
+                        mol: parseFloat(document.getElementById('mol').value),
+                        valoreProduzione: parseFloat(document.getElementById('valoreProduzione').value) || 0,
+                        costiProduzione: parseFloat(document.getElementById('costiProduzione').value) || 0,
+                        ammortamenti: parseFloat(document.getElementById('ammortamenti').value) || 0,
+                        costoTotale: parseFloat(document.getElementById('costoTotale').value),
+                        contributoRichiesto: parseFloat(document.getElementById('contributoRichiesto').value.replace(/[^0-9,]/g, '').replace(',', '.')),
+                        modalitaErogazione: document.getElementById('modalitaErogazione').value,
+                        richiestaAnticipo: document.getElementById('richiestaAnticipo').value,
+                        disponibilitaFinanziaria: parseFloat(document.getElementById('disponibilitaFinanziaria').value) || 0,
+                        deMinimisRicevuti: parseFloat(document.getElementById('deMinimisRicevuti').value) || 0
+                    };
+                    break;
+                    
+                case 4:
+                    datiDomanda.allegato21 = {
+                        numeroMarcaBollo: document.getElementById('numeroMarcaBollo').value,
+                        dataMarcaBollo: document.getElementById('dataMarcaBollo').value
+                    };
+                    break;
+                    
+                case 5:
+                    datiDomanda.formulario = {
+                        titoloProgetto: document.getElementById('titoloProgetto').value,
+                        durataProgetto: document.getElementById('durataProgetto').value,
+                        dataInizio: document.getElementById('dataInizioProgetto').value,
+                        dataFine: document.getElementById('dataFineProgetto').value,
+                        contestoAzienda: document.getElementById('contestoAzienda').value,
+                        motivazioniProgetto: document.getElementById('motivazioniProgetto').value,
+                        obiettiviGenerali: document.getElementById('obiettiviGenerali').value,
+                        obiettiviSpecifici: document.getElementById('obiettiviSpecifici').value,
+                        coerenzaDiagnosi: document.getElementById('coerenzaDiagnosi').value,
+                        tecnologieDigitali: document.getElementById('tecnologieDigitali').value,
+                        processiAziendali: document.getElementById('processiAziendali').value,
+                        innovativita: document.getElementById('innovativita').value,
+                        workPackages: document.getElementById('workPackages').value,
+                        deliverable: document.getElementById('deliverable').value,
+                        risultatiQualitativi: document.getElementById('risultatiQualitativi').value,
+                        kpi: document.getElementById('kpi').value,
+                        impattoEconomico: document.getElementById('impattoEconomico').value
+                    };
+                    break;
+            }
+            
+            salvaLocalmente();
+        }
+        
+        function popolaAllegato21() {
+            // Riepilogo Impresa
+            document.getElementById('riepilogoImpresa').innerHTML = `
+                <p><strong>Ragione Sociale:</strong> ${datiDomanda.impresa.ragioneSociale}</p>
+                <p><strong>P.IVA:</strong> ${datiDomanda.impresa.partitaIva} | <strong>C.F.:</strong> ${datiDomanda.impresa.codiceFiscale}</p>
+                <p><strong>PEC:</strong> ${datiDomanda.impresa.pec}</p>
+                <p><strong>Sede Legale:</strong> ${datiDomanda.impresa.sedeLegale}</p>
+                <p><strong>Dimensione:</strong> ${datiDomanda.impresa.dimensione.toUpperCase()}</p>
+            `;
+            
+            // Riepilogo Legale Rappresentante
+            document.getElementById('riepilogoLegaleRapp').innerHTML = `
+                <p><strong>Nome e Cognome:</strong> ${datiDomanda.legaleRappresentante.nome} ${datiDomanda.legaleRappresentante.cognome}</p>
+                <p><strong>C.F.:</strong> ${datiDomanda.legaleRappresentante.codiceFiscale}</p>
+                <p><strong>Nato a:</strong> ${datiDomanda.legaleRappresentante.luogoNascita} il ${formatDate(datiDomanda.legaleRappresentante.dataNascita)}</p>
+                <p><strong>Residente in:</strong> ${datiDomanda.legaleRappresentante.residenza}</p>
+            `;
+            
+            // Riepilogo Importi
+            document.getElementById('riepilogoImporti').innerHTML = `
+                <p><strong>Costo Totale Ammissibile:</strong> ${formatEuro(datiDomanda.economia.costoTotale)}</p>
+                <p><strong>Contributo Richiesto (80%):</strong> ${formatEuro(datiDomanda.economia.contributoRichiesto)}</p>
+                <p><strong>Cofinanziamento (20%):</strong> ${formatEuro(datiDomanda.economia.costoTotale - datiDomanda.economia.contributoRichiesto)}</p>
+                <p><strong>Modalità Erogazione:</strong> ${datiDomanda.economia.modalitaErogazione === 'sal' ? 'Stati di Avanzamento Lavori' : 'A Saldo'}</p>
+                <p><strong>Richiesta Anticipo:</strong> ${datiDomanda.economia.richiestaAnticipo === 'si' ? 'Sì' : 'No'}</p>
+            `;
+            
+            // Calcola De Minimis
+            calcolaTotaleDeMinimis();
+        }
+        
+        function popolaFormularioF() {
+            // Genera budget dettagliato dai preventivi
+            const tipologieNomi = {
+                'lett_a': 'a) Servizi di consulenza strategica (S3)',
+                'lett_b': 'b) Servizi di consulenza specialistica',
+                'lett_c': 'c) Tecnologie digitali evolute (S3)',
+                'lett_d': 'd) Tecnologie digitali di base',
+                'lett_e': 'e) Software standard/attrezzature'
+            };
+            
+            let budgetHtml = '<table class="table table-preventivi"><thead><tr><th>Tipologia</th><th>Descrizione</th><th>Fornitore</th><th class="text-end">Importo</th></tr></thead><tbody>';
+            
+            let totaliPerTipologia = {};
+            
+            datiDomanda.preventivi.forEach(prev => {
+                totaliPerTipologia[prev.tipologia] = (totaliPerTipologia[prev.tipologia] || 0) + prev.importo;
+                
+                budgetHtml += `
+                    <tr>
+                        <td>${tipologieNomi[prev.tipologia]}</td>
+                        <td>${prev.descrizione}</td>
+                        <td>${prev.fornitore}</td>
+                        <td class="text-end">${formatEuro(prev.importo)}</td>
+                    </tr>
+                `;
+            });
+            
+            budgetHtml += '<tr style="background: #f8f9fa; font-weight: bold;"><td colspan="3">TOTALE GENERALE</td><td class="text-end">' + formatEuro(datiDomanda.economia.costoTotale) + '</td></tr>';
+            budgetHtml += '</tbody></table>';
+            
+            // Mostra subtotali per tipologia
+            budgetHtml += '<h5 class="mt-4">Riepilogo per Tipologia di Spesa</h5><table class="table"><tbody>';
+            Object.keys(totaliPerTipologia).forEach(tip => {
+                budgetHtml += `<tr><td>${tipologieNomi[tip]}</td><td class="text-end"><strong>${formatEuro(totaliPerTipologia[tip])}</strong></td></tr>`;
+            });
+            budgetHtml += '</tbody></table>';
+            
+            document.getElementById('budgetDettagliato').innerHTML = budgetHtml;
+        }
+        
+        function popolaChecklist() {
+            // Genera summary
+            const summaryHtml = `
+                <div class="summary-card">
+                    <h5>Impresa</h5>
+                    <div class="value">${datiDomanda.impresa.ragioneSociale}</div>
+                </div>
+                <div class="summary-card">
+                    <h5>Costo Totale</h5>
+                    <div class="value">${formatEuro(datiDomanda.economia.costoTotale)}</div>
+                </div>
+                <div class="summary-card">
+                    <h5>Contributo Richiesto</h5>
+                    <div class="value">${formatEuro(datiDomanda.economia.contributoRichiesto)}</div>
+                </div>
+                <div class="summary-card">
+                    <h5>Indicatore Ordinatore</h5>
+                    <div class="value">${datiDomanda.economia.indicatoreOrdinatore}</div>
+                </div>
+            `;
+            document.getElementById('summaryGrid').innerHTML = summaryHtml;
+            
+            // Genera checklist
+            const documenti = [
+                {
+                    nome: 'Allegato 2.1 - Istanza di finanziamento',
+                    descrizione: 'Modulo con dati anagrafici, importi e dichiarazioni. DEVE essere firmato digitalmente dal Legale Rappresentante e contenere marca da bollo.',
+                    obbligatorio: true
+                },
+                {
+                    nome: 'Allegato B - Foglio di calcolo MOL',
+                    descrizione: 'Calcolo del Margine Operativo Lordo. DEVE essere asseverato da Commercialista, Revisore dei Conti o CAF.',
+                    obbligatorio: true
+                },
+                {
+                    nome: 'Allegato C - Attestazione capacità finanziaria',
+                    descrizione: 'Certificazione bancaria che attesti disponibilità ≥ 30% del costo totale.',
+                    obbligatorio: true
+                },
+                {
+                    nome: 'Allegato D - DSAN trattamento dati personali',
+                    descrizione: 'Dichiarazione sul consenso al trattamento dei dati personali. DEVE essere firmata digitalmente.',
+                    obbligatorio: true
+                },
+                {
+                    nome: 'Allegato E - Diagnosi Digitale ex-ante',
+                    descrizione: 'Analisi dello stato di digitalizzazione dell\'impresa. Se asseverata da soggetto qualificato, aumenta il punteggio.',
+                    obbligatorio: true
+                },
+                {
+                    nome: 'Allegato F - Formulario proposta progettuale',
+                    descrizione: 'Documento completo con descrizione del progetto, obiettivi, piano di lavoro, budget. DEVE essere firmato digitalmente.',
+                    obbligatorio: true
+                },
+                {
+                    nome: 'Allegato G - DSAN DNSH',
+                    descrizione: 'Solo se pertinente (es. acquisto computer, servizi cloud, data center). DEVE essere controfirmato da tecnico abilitato.',
+                    obbligatorio: false
+                },
+                {
+                    nome: 'Preventivi di spesa',
+                    descrizione: `${datiDomanda.preventivi.length} preventivi inseriti. Devono essere datati dopo la pubblicazione del bando.`,
+                    obbligatorio: true
+                },
+                {
+                    nome: 'Ultimo bilancio depositato',
+                    descrizione: 'Copia del bilancio (o dichiarazione dei redditi per non obbligati).',
+                    obbligatorio: true
+                },
+                {
+                    nome: 'DSAN fornitori qualificati',
+                    descrizione: 'Per spese lett. a, b, c, d: attestazione che il fornitore possiede i requisiti (DIH, Start-up innovativa, etc.).',
+                    obbligatorio: true
+                }
+            ];
+            
+            let checklistHtml = '';
+            documenti.forEach((doc, index) => {
+                checklistHtml += `
+                    <div class="checklist-item" id="checkItem${index}">
+                        <input type="checkbox" class="checklist-checkbox" id="check${index}" onchange="aggiornaChecklist(${index})">
+                        <div class="checklist-content">
+                            <div class="checklist-title">
+                                ${doc.nome}
+                                ${doc.obbligatorio ? '<span style="color: red;">*</span>' : '<span style="color: #6c757d;"> (Se pertinente)</span>'}
+                            </div>
+                            <div class="checklist-description">${doc.descrizione}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('checklistDocumenti').innerHTML = checklistHtml;
+            
+            // Inizializza checklist
+            datiDomanda.checklist = documenti.map(d => ({ ...d, completato: false }));
+        }
+        
+        function aggiornaChecklist(index) {
+            const checkbox = document.getElementById(`check${index}`);
+            const item = document.getElementById(`checkItem${index}`);
+            
+            if (checkbox.checked) {
+                item.classList.add('completed');
+                datiDomanda.checklist[index].completato = true;
+            } else {
+                item.classList.remove('completed');
+                datiDomanda.checklist[index].completato = false;
+            }
+            
+            salvaLocalmente();
+        }
+        
+        // Export Functions
+        function esportaJSON() {
+            const dataStr = JSON.stringify(datiDomanda, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `digit_imprese_${datiDomanda.impresa.partitaIva}_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+        
+        function esportaPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Header
+            doc.setFontSize(18);
+            doc.setTextColor(0, 102, 204);
+            doc.text('DIGIT IMPRESE - Riepilogo Domanda', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Generato il: ${new Date().toLocaleString('it-IT')}`, 105, 28, { align: 'center' });
+            
+            let y = 40;
+            
+            // Sezione Impresa
+            doc.setFontSize(14);
+            doc.setTextColor(0, 102, 204);
+            doc.text('DATI IMPRESA', 20, y);
+            y += 10;
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Ragione Sociale: ${datiDomanda.impresa.ragioneSociale}`, 20, y);
+            y += 7;
+            doc.text(`P.IVA: ${datiDomanda.impresa.partitaIva} | C.F.: ${datiDomanda.impresa.codiceFiscale}`, 20, y);
+            y += 7;
+            doc.text(`Dimensione: ${datiDomanda.impresa.dimensione.toUpperCase()}`, 20, y);
+            y += 15;
+            
+            // Sezione Economica
+            doc.setFontSize(14);
+            doc.setTextColor(0, 102, 204);
+            doc.text('DATI ECONOMICI', 20, y);
+            y += 10;
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Costo Totale: ${formatEuro(datiDomanda.economia.costoTotale)}`, 20, y);
+            y += 7;
+            doc.text(`Contributo Richiesto: ${formatEuro(datiDomanda.economia.contributoRichiesto)}`, 20, y);
+            y += 7;
+            doc.text(`MOL: ${formatEuro(datiDomanda.economia.mol)}`, 20, y);
+            y += 7;
+            doc.text(`Indicatore Ordinatore: ${datiDomanda.economia.indicatoreOrdinatore}`, 20, y);
+            y += 7;
+            doc.text(`Posizionamento: ${datiDomanda.economia.posizionamento}`, 20, y);
+            y += 15;
+            
+            // Preventivi
+            if (datiDomanda.preventivi.length > 0 && y < 250) {
+                doc.setFontSize(14);
+                doc.setTextColor(0, 102, 204);
+                doc.text('PREVENTIVI', 20, y);
+                y += 10;
+                
+                doc.autoTable({
+                    startY: y,
+                    head: [['Descrizione', 'Fornitore', 'Importo']],
+                    body: datiDomanda.preventivi.map(p => [
+                        p.descrizione,
+                        p.fornitore,
+                        formatEuro(p.importo)
+                    ]),
+                    theme: 'grid',
+                    headStyles: { fillColor: [0, 102, 204] }
+                });
+            }
+            
+            doc.save(`digit_imprese_riepilogo_${datiDomanda.impresa.partitaIva}.pdf`);
+        }
+        
+        function esportaExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            // Sheet Preventivi
+            const preventivi = datiDomanda.preventivi.map(p => ({
+                'Tipologia': p.tipologia,
+                'Descrizione': p.descrizione,
+                'Fornitore': p.fornitore,
+                'P.IVA Fornitore': p.piva,
+                'Importo': p.importo,
+                'Data': p.data,
+                'Fornitore Qualificato': p.qualificato
+            }));
+            
+            const wsPreventivi = XLSX.utils.json_to_sheet(preventivi);
+            XLSX.utils.book_append_sheet(wb, wsPreventivi, 'Preventivi');
+            
+            // Sheet Riepilogo
+            const riepilogo = [
+                { Campo: 'Ragione Sociale', Valore: datiDomanda.impresa.ragioneSociale },
+                { Campo: 'P.IVA', Valore: datiDomanda.impresa.partitaIva },
+                { Campo: 'Dimensione', Valore: datiDomanda.impresa.dimensione },
+                { Campo: '', Valore: '' },
+                { Campo: 'Costo Totale', Valore: datiDomanda.economia.costoTotale },
+                { Campo: 'Contributo Richiesto', Valore: datiDomanda.economia.contributoRichiesto },
+                { Campo: 'MOL', Valore: datiDomanda.economia.mol },
+                { Campo: 'Indicatore Ordinatore', Valore: datiDomanda.economia.indicatoreOrdinatore }
+            ];
+            
+            const wsRiepilogo = XLSX.utils.json_to_sheet(riepilogo);
+            XLSX.utils.book_append_sheet(wb, wsRiepilogo, 'Riepilogo');
+            
+            XLSX.writeFile(wb, `digit_imprese_budget_${datiDomanda.impresa.partitaIva}.xlsx`);
+        }
+        
+        function stampaIstanza() {
+            // Genera HTML per stampa Allegato 2.1
+            const printWindow = window.open('', '_blank');
+            
+            const html = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Allegato 2.1 - Istanza di Finanziamento</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 40px; }
+                        h1 { color: #0066cc; text-align: center; }
+                        h2 { color: #0066cc; margin-top: 30px; border-bottom: 2px solid #0066cc; padding-bottom: 5px; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        td { padding: 10px; border: 1px solid #ddd; }
+                        .label { font-weight: bold; width: 40%; background: #f8f9fa; }
+                        .highlight { background: #fffacd; }
+                    </style>
+                </head>
+                <body>
+                    <h1>MODELLO DI ISTANZA DI FINANZIAMENTO</h1>
+                    <p style="text-align: center;">Avviso "Digit Imprese" - Azione 1.2.2</p>
+                    
+                    <h2>Sezione 1 - Dati del Soggetto Proponente</h2>
+                    <table>
+                        <tr><td class="label">Ragione Sociale</td><td>${datiDomanda.impresa.ragioneSociale}</td></tr>
+                        <tr><td class="label">Partita IVA</td><td>${datiDomanda.impresa.partitaIva}</td></tr>
+                        <tr><td class="label">Codice Fiscale</td><td>${datiDomanda.impresa.codiceFiscale}</td></tr>
+                        <tr><td class="label">PEC</td><td>${datiDomanda.impresa.pec}</td></tr>
+                        <tr><td class="label">Sede Legale</td><td>${datiDomanda.impresa.sedeLegale}</td></tr>
+                        <tr><td class="label">Dimensione Impresa</td><td>${datiDomanda.impresa.dimensione.toUpperCase()}</td></tr>
+                    </table>
+                    
+                    <h2>Sezione 2 - Legale Rappresentante</h2>
+                    <table>
+                        <tr><td class="label">Nome e Cognome</td><td>${datiDomanda.legaleRappresentante.nome} ${datiDomanda.legaleRappresentante.cognome}</td></tr>
+                        <tr><td class="label">Codice Fiscale</td><td>${datiDomanda.legaleRappresentante.codiceFiscale}</td></tr>
+                        <tr><td class="label">Luogo di Nascita</td><td>${datiDomanda.legaleRappresentante.luogoNascita}</td></tr>
+                        <tr><td class="label">Data di Nascita</td><td>${formatDate(datiDomanda.legaleRappresentante.dataNascita)}</td></tr>
+                        <tr><td class="label">Residenza</td><td>${datiDomanda.legaleRappresentante.residenza}</td></tr>
+                    </table>
+                    
+                    <h2>Sezione 3 - Importi e Modalità di Erogazione</h2>
+                    <table>
+                        <tr><td class="label">Costo Totale Ammissibile</td><td class="highlight">${formatEuro(datiDomanda.economia.costoTotale)}</td></tr>
+                        <tr><td class="label">Contributo Richiesto (80%)</td><td class="highlight">${formatEuro(datiDomanda.economia.contributoRichiesto)}</td></tr>
+                        <tr><td class="label">Cofinanziamento (20%)</td><td>${formatEuro(datiDomanda.economia.costoTotale - datiDomanda.economia.contributoRichiesto)}</td></tr>
+                        <tr><td class="label">Modalità di Erogazione</td><td>${datiDomanda.economia.modalitaErogazione === 'sal' ? 'Stati di Avanzamento Lavori' : 'A Saldo'}</td></tr>
+                    </table>
+                    
+                    <h2>Marca da Bollo</h2>
+                    <table>
+                        <tr><td class="label">Numero Marca da Bollo</td><td class="highlight">${datiDomanda.allegato21?.numeroMarcaBollo || '[DA COMPILARE]'}</td></tr>
+                        <tr><td class="label">Data Marca da Bollo</td><td class="highlight">${datiDomanda.allegato21?.dataMarcaBollo ? formatDate(datiDomanda.allegato21.dataMarcaBollo) : '[DA COMPILARE]'}</td></tr>
+                    </table>
+                    
+                    <div style="margin-top: 50px; border: 2px solid #dc3545; padding: 20px; background: #fff3cd;">
+                        <h3 style="color: #dc3545;">IMPORTANTE - FIRMA DIGITALE RICHIESTA</h3>
+                        <p>Questo documento DEVE essere firmato digitalmente dal Legale Rappresentante prima dell'invio sulla piattaforma.</p>
+                        <p>Verificare la presenza della marca da bollo (€16,00) e indicare numero e data nel documento.</p>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.write(html);
+            printWindow.document.close();
+            printWindow.print();
+        }
+        
+        function finalizza() {
+            // Verifica completezza checklist
+            const obbligatoriCompletati = datiDomanda.checklist
+                .filter(d => d.obbligatorio)
+                .every(d => d.completato);
+            
+            if (!obbligatoriCompletati) {
+                alert('⚠️ ATTENZIONE: Non tutti i documenti obbligatori sono stati verificati nella checklist!\n\nLa domanda sarà IRRICEVIBILE se manca anche un solo documento.');
+                return;
+            }
+            
+            const conferma = confirm(
+                '✅ PREPARAZIONE COMPLETATA!\n\n' +
+                'Hai verificato tutti i documenti obbligatori.\n\n' +
+                'PROSSIMI PASSI:\n' +
+                '1. Esporta tutti i dati (JSON, PDF, Excel)\n' +
+                '2. Completa tutti gli Allegati richiesti\n' +
+                '3. Fai firmare digitalmente i documenti dal Legale Rappresentante\n' +
+                '4. Fai asseverare l\'Allegato B dal Commercialista/Revisore/CAF\n' +
+                '5. Ottieni l\'Attestazione bancaria (Allegato C)\n' +
+                '6. Se pertinente, fai asseverare l\'Allegato G da un tecnico abilitato\n' +
+                '7. Prepara la Diagnosi Digitale (Allegato E)\n' +
+                '8. Accedi al Portale delle Agevolazioni tra il 13 e il 27 Novembre 2025\n' +
+                '9. Carica tutti i documenti firmati\n' +
+                '10. Invia la domanda!\n\n' +
+                'Vuoi procedere con l\'esportazione dei dati?'
+            );
+            
+            if (conferma) {
+                esportaJSON();
+                setTimeout(() => esportaPDF(), 1000);
+                setTimeout(() => esportaExcel(), 2000);
+                
+                alert('✅ Dati esportati con successo!\n\nIn bocca al lupo per la tua domanda DIGIT IMPRESE! 🚀');
+            }
+        }
+        
+        // Utility Functions
+        function formatEuro(value) {
+            if (!value && value !== 0) return '€ 0,00';
+            return '€ ' + parseFloat(value).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('it-IT');
+        }
+        
+        function salvaLocalmente() {
+            localStorage.setItem('digitImpreseDomanda', JSON.stringify(datiDomanda));
+        }
+        
+        function caricaDatiSalvati() {
+            const saved = localStorage.getItem('digitImpreseDomanda');
+            if (saved) {
+                const conferma = confirm('Trovati dati salvati in precedenza. Vuoi ripristinarli?');
+                if (conferma) {
+                    datiDomanda = JSON.parse(saved);
+                    popolaCampiDaSalvataggio();
+                }
+            }
+        }
+        
+        function popolaCampiDaSalvataggio() {
+            // Popola Fase 1
+            if (datiDomanda.impresa) {
+                Object.keys(datiDomanda.impresa).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) element.value = datiDomanda.impresa[key];
+                });
+            }
+            
+            if (datiDomanda.legaleRappresentante) {
+                document.getElementById('lrNome').value = datiDomanda.legaleRappresentante.nome || '';
+                document.getElementById('lrCognome').value = datiDomanda.legaleRappresentante.cognome || '';
+                document.getElementById('lrCF').value = datiDomanda.legaleRappresentante.codiceFiscale || '';
+                document.getElementById('lrLuogoNascita').value = datiDomanda.legaleRappresentante.luogoNascita || '';
+                document.getElementById('lrDataNascita').value = datiDomanda.legaleRappresentante.dataNascita || '';
+                document.getElementById('lrResidenza').value = datiDomanda.legaleRappresentante.residenza || '';
+            }
+            
+            // Popola Fase 2
+            if (datiDomanda.economia) {
+                Object.keys(datiDomanda.economia).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element && typeof datiDomanda.economia[key] !== 'object') {
+                        element.value = datiDomanda.economia[key];
+                    }
+                });
+                
+                aggiornaMassimale();
+                aggiornaContributoRichiesto();
+            }
+            
+            // Popola Preventivi
+            if (datiDomanda.preventivi && datiDomanda.preventivi.length > 0) {
+                mostraPreventivi();
+            }
+            
+            // Popola Formulario
+            if (datiDomanda.formulario) {
+                Object.keys(datiDomanda.formulario).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) element.value = datiDomanda.formulario[key] || '';
+                });
+            }
+        }
+        
+        function salvaAutomaticamente() {
+            salvaDatiFase(currentStep);
+            console.log('Auto-save effettuato:', new Date().toLocaleTimeString());
+        }
+        
+        // Esporta funzioni globali per onclick
+        window.goToStep = goToStep;
+        window.calcolaIndicatore = calcolaIndicatore;
+        window.aggiungiPreventivo = aggiungiPreventivo;
+        window.rimuoviPreventivo = rimuoviPreventivo;
+        window.aggiornaChecklist = aggiornaChecklist;
+        window.esportaJSON = esportaJSON;
+        window.esportaPDF = esportaPDF;
+        window.esportaExcel = esportaExcel;
+        window.stampaIstanza = stampaIstanza;
+        window.finalizza = finalizza;
+    </script>
+</body>
+</html>
